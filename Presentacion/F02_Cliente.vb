@@ -632,6 +632,7 @@ Public Class F02_Cliente
         P_prEstadoNueModEli(1)
         P_prHDComponentes(BoNuevo)
         TbNombre.Select()
+        P_prArmarGrillaProducto(-1)
         P_prAddFilaProducto()
         _prCargarGridCategoria()
     End Sub

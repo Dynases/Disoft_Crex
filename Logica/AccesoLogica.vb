@@ -1415,7 +1415,53 @@ Public Class AccesoLogica
         Sql = _idCabecera + ",'" + _codProd + "'," + _cantidad + "," + _precio + "," + _subTotal + "," + _desc + "," + _total + "," + _flia + "," + _atributo + "," + campo2
         _Err = D_Insertar_Datos("TO0011", Sql)
     End Sub
+    Public Shared Sub L_PedidoDetalleRecibo_GrabarNuevo(_idCabecera As String, _codProd As String, _cantidad As String, _precio As String, _subTotal As String, _desc As String, _total As String, _flia As String, _atributo As String)
+        Dim _Err As Boolean
+        Dim Sql As String
 
+        'Recuperamos el precio de costo del producto
+        Dim _Tabla As DataTable
+        Dim _Where As String
+        _Where = " chcatcl =1  And chcprod=" + _codProd
+        _Tabla = D_Datos_Tabla("chprecio", "TC003", _Where)
+
+        Dim campo2 As String
+        campo2 = _Tabla.Rows(0).Item("chprecio").ToString
+
+        Sql = _idCabecera + ",'" + _codProd + "'," + _cantidad + "," + _precio + "," + _subTotal + "," + _desc + "," + _total + "," + _flia + "," + _atributo + "," + campo2
+        _Err = D_Insertar_Datos("TO0011A", Sql)
+    End Sub
+    Public Shared Sub L_PedidoDetalleFactura_GrabarNuevo(_idCabecera As String, _codProd As String, _cantidad As String, _precio As String, _subTotal As String, _desc As String, _total As String, _flia As String, _atributo As String)
+        Dim _Err As Boolean
+        Dim Sql As String
+
+        'Recuperamos el precio de costo del producto
+        Dim _Tabla As DataTable
+        Dim _Where As String
+        _Where = " chcatcl =1  And chcprod=" + _codProd
+        _Tabla = D_Datos_Tabla("chprecio", "TC003", _Where)
+
+        Dim campo2 As String
+        campo2 = _Tabla.Rows(0).Item("chprecio").ToString
+
+        Sql = _idCabecera + ",'" + _codProd + "'," + _cantidad + "," + _precio + "," + _subTotal + "," + _desc + "," + _total + "," + _flia + "," + _atributo + "," + campo2
+        _Err = D_Insertar_Datos("TO0011B", Sql)
+    End Sub
+    Public Shared Function verificarEsProductoParaRecibo(productoId As String) As Boolean
+        Dim _Tabla As DataTable
+        Dim _Where As String
+        _Where = " canumi=" + productoId
+        _Tabla = D_Datos_Tabla("caTipoDoc", " TC001", _Where)
+        If _Tabla.Rows.Count > 0 Then
+            If _Tabla.Rows(0).Item(0) = 1 Then
+                Return False
+            End If
+            If _Tabla.Rows(0).Item(0) = 2 Then
+                Return True
+            End If
+        End If
+        Return False
+    End Function
     Public Shared Sub L_PedidoDetalle_Modificar(_id As String, _latitu As String, _longitud As String)
         Dim _Err As Boolean
         Dim Sql, _where As String
@@ -2529,7 +2575,7 @@ Public Class AccesoLogica
                                               serie As String, pcom As String, fing As String, cemp As String,
                                               barra As String, smin As String, gr1 As String, gr2 As String,
                                               gr3 As String, gr4 As String, umed As String, umin As String,
-                                              umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable) As Boolean
+                                              umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer) As Boolean
         Dim _resultado As Boolean
 
         Dim _Tabla As DataTable
@@ -2560,6 +2606,7 @@ Public Class AccesoLogica
         _listParam.Add(New Datos.DParametro("@umax", umax))
         _listParam.Add(New Datos.DParametro("@conv", conv))
         _listParam.Add(New Datos.DParametro("@pack", pack))
+        _listParam.Add(New Datos.DParametro("@tipoDoc", tipoDoc))
         _listParam.Add(New Datos.DParametro("@TC0013", "", _TC0013))
 
         _Tabla = D_ProcedimientoConParam("sp_go_TC001", _listParam)
@@ -2580,7 +2627,7 @@ Public Class AccesoLogica
                                                  serie As String, pcom As String, fing As String, cemp As String,
                                                  barra As String, smin As String, gr1 As String, gr2 As String,
                                                  gr3 As String, gr4 As String, umed As String, umin As String,
-                                                 umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable) As Boolean
+                                                 umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer) As Boolean
         Dim _resultado As Boolean
 
         Dim _Tabla As DataTable
@@ -2611,6 +2658,7 @@ Public Class AccesoLogica
         _listParam.Add(New Datos.DParametro("@umax", umax))
         _listParam.Add(New Datos.DParametro("@conv", conv))
         _listParam.Add(New Datos.DParametro("@pack", pack))
+        _listParam.Add(New Datos.DParametro("@tipoDoc", tipoDoc))
         _listParam.Add(New Datos.DParametro("@TC0013", "", _TC0013))
 
         _Tabla = D_ProcedimientoConParam("sp_go_TC001", _listParam)

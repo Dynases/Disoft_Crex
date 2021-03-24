@@ -398,7 +398,7 @@ Public Class F01_Producto
                     Me.CbUnidMax.Value = .GetValue("caumax")
                     Me.TbConversion.Value = .GetValue("caconv")
                     Me.swPack.Value = .GetValue("capack")
-
+                    Me.swTipoDoc.Value = IIf(.GetValue("caTipoDoc") = 1, True, False)
                     Dim s As String = .GetValue("nimg").ToString
                     If (.GetValue("nimg").ToString.Equals("")) Then
                         UcImagen.Image = My.Resources.imageDefault
@@ -523,7 +523,7 @@ Public Class F01_Producto
         Dim umax As String
         Dim conv As Integer
         Dim pack As Integer
-
+        Dim TipoDoc As Integer
 
         If (BoNuevo) Then
             If (P_fnValidarGrabacion()) Then
@@ -561,9 +561,9 @@ Public Class F01_Producto
                 Else
                     img = P_fnObtenerID()
                 End If
-
+                TipoDoc = IIf(swTipoDoc.Value, 1, 2)
                 'Grabar
-                Dim res As Boolean = L_fnProductoGrabar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, CType(JGProdPack.DataSource, DataTable))
+                Dim res As Boolean = L_fnProductoGrabar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, CType(JGProdPack.DataSource, DataTable), TipoDoc)
 
                 If (res) Then
                     If (IsNothing(vlImagen) = False) Then
@@ -619,7 +619,7 @@ Public Class F01_Producto
                 umin = CbUnidVenta.Value
                 umax = CbUnidMax.Value
                 pack = IIf(swPack.Value, "1", "0")
-
+                TipoDoc = IIf(swTipoDoc.Value, 1, 2)
                 If (TbConversion.Text.Trim = "") Then
                     conv = 0
                 Else
@@ -642,7 +642,7 @@ Public Class F01_Producto
 
 
                 'Grabar
-                Dim res As Boolean = L_fnProductoModificar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, dt)
+                Dim res As Boolean = L_fnProductoModificar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, dt, TipoDoc)
 
                 If (res) Then
                     If (IsNothing(vlImagen) = False) Then
@@ -1235,6 +1235,9 @@ Public Class F01_Producto
             .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
             .CellStyle.Font = FtNormal
             .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Near
+            .Visible = False
+        End With
+        With DgjBusqueda.RootTable.Columns(29)
             .Visible = False
         End With
         'Habilitar Filtradores

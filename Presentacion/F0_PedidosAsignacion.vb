@@ -9,6 +9,7 @@ Imports DevComponents.DotNetBar
 Imports DevComponents.DotNetBar.Controls
 Imports System.Drawing.Printing
 Imports Entidades
+Imports UTILITIES
 
 Public Class F0_PedidosAsignacion
     Dim _inter As Integer
@@ -161,253 +162,273 @@ Public Class F0_PedidosAsignacion
         JGr_Zonas3.Font = fuente
 
     End Sub
-
+    Private Sub MostrarMensajeError(mensaje As String)
+        ToastNotification.Show(Me,
+                               mensaje.ToUpper,
+                               My.Resources.WARNING,
+                               ENMensaje.MEDIANO,
+                               eToastGlowColor.Red,
+                               eToastPosition.TopCenter)
+    End Sub
+    Private Sub MostrarMensajeOk(mensaje As String)
+        ToastNotification.Show(Me,
+                               mensaje.ToUpper,
+                               My.Resources.OK,
+                               ENMensaje.MEDIANO,
+                               eToastGlowColor.Green,
+                               eToastPosition.TopCenter)
+    End Sub
     Private Sub _PCargarGridRegistrosPedidos(ByRef objGrid As Janus.Windows.GridEX.GridEX, estado As String, Optional ByVal codZona As String = "", Optional ByVal codRep As String = "-1")
-        Dim dtReg As DataTable
-        If codZona = "" Then
-            If codRep = "-1" Then
-                dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + " ) AND oaap=1")
-            Else
-                If estado = "1" Then
-                    dtReg = L_PedidoCabecera_GeneralSoloRepartidor(-1, " AND (oaest=" + estado + " ) AND oaap=1" + " AND tl0012.lccbnumi=" + codRep)
+        Try
+            Dim dtReg As DataTable
+            If codZona = "" Then
+                If codRep = "-1" Then
+                    dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + " ) AND oaap=1")
                 Else
-                    dtReg = L_PedidoCabecera_GeneralSoloRepartidor(-1, " AND (oaest=" + estado + " ) AND oaap=1" + " AND tl0012.lccbnumi=" + codRep)
+                    If estado = "1" Then
+                        dtReg = L_PedidoCabecera_GeneralSoloRepartidor(-1, " AND (oaest=" + estado + " ) AND oaap=1" + " AND tl0012.lccbnumi=" + codRep)
+                    Else
+                        dtReg = L_PedidoCabecera_GeneralSoloRepartidor(-1, " AND (oaest=" + estado + " ) AND oaap=1" + " AND tl0012.lccbnumi=" + codRep)
+                    End If
                 End If
-            End If
-        Else
-            If codRep = "-1" Then
-                dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + ") AND oazona= " + codZona + " AND oaap=1")
             Else
-                dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + " ) AND oazona= " + codZona + " AND oarepa=" + codRep + " AND oaap=1")
+                If codRep = "-1" Then
+                    dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + ") AND oazona= " + codZona + " AND oaap=1")
+                Else
+                    dtReg = L_PedidoCabecera_General(-1, " AND (oaest=" + estado + " ) AND oazona= " + codZona + " AND oarepa=" + codRep + " AND oaap=1")
+                End If
+
             End If
 
-        End If
+
+            'añadir columna de check box
+            dtReg.Columns.Add("Check", Type.GetType("System.Boolean"))
+            Dim i As Integer
+            For i = 0 To dtReg.Rows.Count - 1
+                dtReg.Rows(i).Item("Check") = False
+            Next
 
 
-        'añadir columna de check box
-        dtReg.Columns.Add("Check", Type.GetType("System.Boolean"))
-        Dim i As Integer
-        For i = 0 To dtReg.Rows.Count - 1
-            dtReg.Rows(i).Item("Check") = False
-        Next
+            objGrid.BoundMode = BoundMode.Bound
+            objGrid.DataSource = dtReg
+            objGrid.RetrieveStructure()
+            With objGrid.RootTable.Columns("monto")
+                .Width = 70
+                .Visible = True
+                .Caption = "Total"
+                .FormatString = "0.00"
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+                .AggregateFunction = AggregateFunction.Sum
+            End With
+            'dar formato a las columnas
+            With objGrid.RootTable.Columns(0)
+                .Caption = "Cod.Ped"
+                .Key = "CodPedido"
+                .Width = 60
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+            End With
+            With objGrid.RootTable.Columns(1)
+                .Caption = "Fecha"
+                .Width = 90
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+            End With
 
+            With objGrid.RootTable.Columns(2)
+                .Key = "hora"
+                .Caption = "Hora"
+                .Width = 55
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+            End With
 
-        objGrid.BoundMode = BoundMode.Bound
-        objGrid.DataSource = dtReg
-        objGrid.RetrieveStructure()
-        With objGrid.RootTable.Columns("monto")
-            .Width = 70
-            .Visible = True
-            .Caption = "Total"
-            .FormatString = "0.00"
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-            .AggregateFunction = AggregateFunction.Sum
-        End With
-        'dar formato a las columnas
-        With objGrid.RootTable.Columns(0)
-            .Caption = "Cod.Ped"
-            .Key = "CodPedido"
-            .Width = 60
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-        End With
-        With objGrid.RootTable.Columns(1)
-            .Caption = "Fecha"
-            .Width = 90
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-        End With
+            With objGrid.RootTable.Columns(3)
+                .Visible = False
+                .Key = "codCliente"
+                .Caption = "Cod. Cliente"
+                .Width = 80
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Near
+            End With
 
-        With objGrid.RootTable.Columns(2)
-            .Key = "hora"
-            .Caption = "Hora"
-            .Width = 55
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-        End With
+            With objGrid.RootTable.Columns(4)
+                .Caption = "Nombre"
+                .Width = 250
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+            End With
 
-        With objGrid.RootTable.Columns(3)
-            .Visible = False
-            .Key = "codCliente"
-            .Caption = "Cod. Cliente"
-            .Width = 80
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Near
-        End With
+            With objGrid.RootTable.Columns(5)
+                .Caption = "Direccion"
+                .Width = 200
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+            End With
 
-        With objGrid.RootTable.Columns(4)
-            .Caption = "Nombre"
-            .Width = 250
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-        End With
+            With objGrid.RootTable.Columns(6)
+                .Caption = "Telefono"
+                .Width = 70
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+            End With
 
-        With objGrid.RootTable.Columns(5)
-            .Caption = "Direccion"
-            .Width = 200
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-        End With
+            With objGrid.RootTable.Columns(7)
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns(6)
-            .Caption = "Telefono"
-            .Width = 70
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-        End With
+            With objGrid.RootTable.Columns(8)
+                .Key = "zona"
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns(7)
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns(9)
+                .Caption = "Zona"
+                .Width = 100
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+            End With
 
-        With objGrid.RootTable.Columns(8)
-            .Key = "zona"
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns(10)
+                .Visible = False
+                .Key = "ObsPedido"
+            End With
 
-        With objGrid.RootTable.Columns(9)
-            .Caption = "Zona"
-            .Width = 100
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-        End With
+            With objGrid.RootTable.Columns(11)
+                .Visible = False
+                .Key = "ObsPedido2"
+            End With
 
-        With objGrid.RootTable.Columns(10)
-            .Visible = False
-            .Key = "ObsPedido"
-        End With
+            With objGrid.RootTable.Columns(12) 'estado
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns(11)
-            .Visible = False
-            .Key = "ObsPedido2"
-        End With
+            'latitud y longitud
+            With objGrid.RootTable.Columns(13)
+                .Key = "Latitud"
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns(12) 'estado
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns(14)
+                .Key = "Longitud"
+                .Visible = False
+            End With
 
-        'latitud y longitud
-        With objGrid.RootTable.Columns(13)
-            .Key = "Latitud"
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("oaap")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns(14)
-            .Key = "Longitud"
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("reclamo")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("oaap")
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("oapg")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("reclamo")
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("ccultvent")
+                .Caption = "Ult. Venta"
+                .Width = 90
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
+            End With
 
-        With objGrid.RootTable.Columns("oapg")
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("tipoRecCliente")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("ccultvent")
-            .Caption = "Ult. Venta"
-            .Width = 90
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .CellStyle.TextAlignment = Janus.Windows.GridEX.TextAlignment.Far
-        End With
+            With objGrid.RootTable.Columns("tipoRecRepartidor")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("tipoRecCliente")
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("ccnumi")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("tipoRecRepartidor")
-            .Visible = False
-        End With
+            With objGrid.RootTable.Columns("cceven")
+                .Visible = False
+            End With
 
-        With objGrid.RootTable.Columns("ccnumi")
-            .Visible = False
-        End With
+            'objGrid.RootTable.Columns.Add("Check")
+            With objGrid.RootTable.Columns(_colCkeck)
+                .Visible = True
+                .key = "check"
+                .Width = 50
+                .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
+                .CellStyle.FontSize = gi_fuenteTamano
+                .EditType = EditType.CheckBox
+                .ColumnType = ColumnType.CheckBox
+                .CheckBoxFalseValue = False
+                .CheckBoxTrueValue = True
+            End With
 
-        With objGrid.RootTable.Columns("cceven")
-            .Visible = False
-        End With
+            'Habilitar Filtradores
+            With objGrid
+                .DefaultFilterRowComparison = FilterConditionOperator.Contains
+                .FilterMode = FilterMode.Automatic
+                .FilterRowUpdateMode = FilterRowUpdateMode.WhenValueChanges
+                .GroupByBoxVisible = False
+                .TotalRow = InheritableBoolean.True
+                .TotalRowFormatStyle.BackColor = Color.Gold
+                .TotalRowPosition = TotalRowPosition.BottomFixed
+                .VisualStyle = VisualStyle.Office2007
+            End With
 
-        'objGrid.RootTable.Columns.Add("Check")
-        With objGrid.RootTable.Columns(_colCkeck)
-            .Visible = True
-            .key = "check"
-            .Width = 50
-            .HeaderAlignment = Janus.Windows.GridEX.TextAlignment.Center
-            .CellStyle.FontSize = gi_fuenteTamano
-            .EditType = EditType.CheckBox
-            .ColumnType = ColumnType.CheckBox
-            .CheckBoxFalseValue = False
-            .CheckBoxTrueValue = True
-        End With
+            'poner color a la fila de acuerdo a la condicion 
+            Dim fc, fc1, fc2, fc3, fc66, fcRecClient, fcRecRepart As GridEXFormatCondition
+            fc = New GridEXFormatCondition(objGrid.RootTable.Columns("reclamo"), ConditionOperator.Equal, 1)
+            'fc.FormatStyle.BackColor = Color.LightYellow
+            fc.FormatStyle.ForeColor = Color.Red
 
-        'Habilitar Filtradores
-        With objGrid
-            .DefaultFilterRowComparison = FilterConditionOperator.Contains
-            .FilterMode = FilterMode.Automatic
-            .FilterRowUpdateMode = FilterRowUpdateMode.WhenValueChanges
-            .GroupByBoxVisible = False
-            .TotalRow = InheritableBoolean.True
-            .TotalRowFormatStyle.BackColor = Color.Gold
-            .TotalRowPosition = TotalRowPosition.BottomFixed
-            .VisualStyle = VisualStyle.Office2007
-        End With
+            fc1 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 1)
+            fc1.FormatStyle.BackColor = Color.LightGreen
 
-        'poner color a la fila de acuerdo a la condicion 
-        Dim fc, fc1, fc2, fc3, fc66, fcRecClient, fcRecRepart As GridEXFormatCondition
-        fc = New GridEXFormatCondition(objGrid.RootTable.Columns("reclamo"), ConditionOperator.Equal, 1)
-        'fc.FormatStyle.BackColor = Color.LightYellow
-        fc.FormatStyle.ForeColor = Color.Red
+            'pedido generado desde el celular
+            fc66 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 11)
+            fc66.FormatStyle.BackColor = Color.LightCyan
 
-        fc1 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 1)
-        fc1.FormatStyle.BackColor = Color.LightGreen
+            'formato para decir si es un pedido esta entregado y con nota
+            fc2 = New GridEXFormatCondition(objGrid.RootTable.Columns("oaest"), ConditionOperator.Equal, 4)
+            fc2.FormatStyle.BackColor = Color.LightGray
 
-        'pedido generado desde el celular
-        fc66 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 11)
-        fc66.FormatStyle.BackColor = Color.LightCyan
+            'formato para decir si es un pedido fue regerado a partir de otro pedido
+            fc3 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 2)
+            fc3.FormatStyle.BackColor = Color.Yellow
 
-        'formato para decir si es un pedido esta entregado y con nota
-        fc2 = New GridEXFormatCondition(objGrid.RootTable.Columns("oaest"), ConditionOperator.Equal, 4)
-        fc2.FormatStyle.BackColor = Color.LightGray
+            'formato para decir si es un pedido tiene reclamo de un repartidor
+            fcRecRepart = New GridEXFormatCondition(objGrid.RootTable.Columns("tipoRecRepartidor"), ConditionOperator.Equal, 1)
+            fcRecRepart.FormatStyle.BackColor = Color.LightYellow
 
-        'formato para decir si es un pedido fue regerado a partir de otro pedido
-        fc3 = New GridEXFormatCondition(objGrid.RootTable.Columns("oapg"), ConditionOperator.Equal, 2)
-        fc3.FormatStyle.BackColor = Color.Yellow
+            'formato para decir si es un pedido tiene reclamo de un cliente
+            fcRecClient = New GridEXFormatCondition(objGrid.RootTable.Columns("tipoRecCliente"), ConditionOperator.Equal, 1)
+            fcRecClient.FormatStyle.BackColor = Color.LightGreen
 
-        'formato para decir si es un pedido tiene reclamo de un repartidor
-        fcRecRepart = New GridEXFormatCondition(objGrid.RootTable.Columns("tipoRecRepartidor"), ConditionOperator.Equal, 1)
-        fcRecRepart.FormatStyle.BackColor = Color.LightYellow
+            objGrid.RootTable.FormatConditions.Add(fc)
+            objGrid.RootTable.FormatConditions.Add(fc1)
+            objGrid.RootTable.FormatConditions.Add(fc2)
+            objGrid.RootTable.FormatConditions.Add(fc3)
+            objGrid.RootTable.FormatConditions.Add(fc66)
 
-        'formato para decir si es un pedido tiene reclamo de un cliente
-        fcRecClient = New GridEXFormatCondition(objGrid.RootTable.Columns("tipoRecCliente"), ConditionOperator.Equal, 1)
-        fcRecClient.FormatStyle.BackColor = Color.LightGreen
+            objGrid.RootTable.FormatConditions.Add(fcRecRepart)
+            objGrid.RootTable.FormatConditions.Add(fcRecClient)
 
-        objGrid.RootTable.FormatConditions.Add(fc)
-        objGrid.RootTable.FormatConditions.Add(fc1)
-        objGrid.RootTable.FormatConditions.Add(fc2)
-        objGrid.RootTable.FormatConditions.Add(fc3)
-        objGrid.RootTable.FormatConditions.Add(fc66)
+            If estado = "3" Then
+                objGrid.RootTable.Columns("Check").Visible = False 'oculto el check
+            Else
+                objGrid.RootTable.Columns("Check").Visible = True 'oculto el check
+            End If
+        Catch ex As Exception
+            MostrarMensajeError(ex.Message)
+        End Try
 
-        objGrid.RootTable.FormatConditions.Add(fcRecRepart)
-        objGrid.RootTable.FormatConditions.Add(fcRecClient)
-
-        If estado = "3" Then
-            objGrid.RootTable.Columns("Check").Visible = False 'oculto el check
-        Else
-            objGrid.RootTable.Columns("Check").Visible = True 'oculto el check
-        End If
     End Sub
 
     Private Sub _PCargarGridRegistrosPedidosInvalidos(ByRef objGrid As Janus.Windows.GridEX.GridEX, estado As String, Optional ByVal codZona As String = "", Optional ByVal codRep As String = "-1")
@@ -1156,13 +1177,18 @@ Public Class F0_PedidosAsignacion
     End Sub
 
     Private Sub P_prPonerCodicion()
-        'poner color a la fila de acuerdo a la condicion 
-        Dim fc As GridEXFormatCondition
-        fc = New GridEXFormatCondition(JGr_Registros1.RootTable.Columns("cceven"), ConditionOperator.Equal, 1)
-        fc.FormatStyle.BackColor = Color.Blue
-        fc.FormatStyle.ForeColor = Color.White
+        Try
+            Dim fc As GridEXFormatCondition
+            fc = New GridEXFormatCondition(JGr_Registros1.RootTable.Columns("cceven"), ConditionOperator.Equal, 1)
+            fc.FormatStyle.BackColor = Color.Blue
+            fc.FormatStyle.ForeColor = Color.White
 
-        JGr_Registros1.RootTable.FormatConditions.Add(fc)
+            JGr_Registros1.RootTable.FormatConditions.Add(fc)
+        Catch ex As Exception
+            MostrarMensajeError(ex.Message)
+        End Try
+        'poner color a la fila de acuerdo a la condicion 
+
     End Sub
 
     Private Sub RETORNARPEDIDOACONFIRMACIONDEENTREGAToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RETORNARPEDIDOACONFIRMACIONDEENTREGAToolStripMenuItem.Click

@@ -10,6 +10,7 @@ Public Interface IPedido
     Function ListarDespachoXProductoDeChofer(idChofer As Integer, estado As Integer, fechaDesde As DateTime, fechaHasta As DateTime) As List(Of RDespachoXProducto)
     Function VolverPedidoDistribucion(listIdPedido As List(Of Integer), idChofer As Integer) As Boolean
     Function ListarDespachXNotaVentaDeChofer(idChofer As Integer, idPedido As Integer) As List(Of RDespachoNotaVenta)
+    Function ListarDespachXNotaVentaDeChofer2(idChofer As Integer, idPedido As Integer) As List(Of RDespachoNotaVenta)
     Function ListarDespachXNotaVenta(idPedido As Integer) As List(Of RDespachoNotaVenta)
     Function ListarPedidoAsignadoAChofer(idChofer As Integer) As List(Of VPedido_BillingDispatch)
     Function ListarDespachoXClienteDeChofer(idChofer As Integer) As List(Of RDespachoxCliente)

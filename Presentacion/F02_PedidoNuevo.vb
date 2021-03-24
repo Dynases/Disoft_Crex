@@ -1622,6 +1622,12 @@ Public Class F02_PedidoNuevo
 
                     L_PedidoDetalle_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
 
+                    'Divide el pedido en Pedido con recibo o Factura
+                    'If Not verificarEsProductoParaRecibo(codProd) Then
+                    '    L_PedidoDetalleRecibo_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                    'Else
+                    '    L_PedidoDetalleFactura_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                    'End If
                     'adiciono un objeto detalle
                     objListDetalle.Add(New RequestDetail(Tb_Id.Text, codProd, cant, precio, subTotal, L_ClaseGetProducto(codProd))) 'webLuis
                 Next
@@ -1744,6 +1750,12 @@ Public Class F02_PedidoNuevo
                     atributo = JGr_DetallePedido.CurrentRow.Cells("Atributo").Value
 
                     L_PedidoDetalle_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                    'Divide el pedido en Pedido con recibo o Factura
+                    'If Not verificarEsProductoParaRecibo(codProd) Then
+                    '    L_PedidoDetalleRecibo_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                    'Else
+                    '    L_PedidoDetalleFactura_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                    'End If
                 Next
                 If (swTipoVenta.Value = False) Then  ''''Grabar Credito
                     L_prCajaGrabarCredito(Tb_Id.Text, Double.Parse(tbMontoCredito.Text))
@@ -2210,6 +2222,12 @@ Public Class F02_PedidoNuevo
                 atributo = JGr_DetallePedido.CurrentRow.Cells("Atributo").Value
 
                 L_PedidoDetalle_GrabarNuevo(idPedido, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                'Divide el pedido en Pedido con recibo o Factura
+                'If Not verificarEsProductoParaRecibo(codProd) Then
+                '    L_PedidoDetalleRecibo_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                'Else
+                '    L_PedidoDetalleFactura_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                'End If
             Next
             'grabar estado del pedido
             L_PedidoEstados_Grabar(idPedido, "11", Date.Now.Date.ToString("yyyy/MM/dd"), Now.Hour.ToString + ":" + Now.Minute.ToString, gs_user)
@@ -3070,6 +3088,12 @@ Public Class F02_PedidoNuevo
 
                 L_PedidoDetalle_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
 
+                'Divide el pedido en Pedido con recibo o Factura
+                'If Not verificarEsProductoParaRecibo(codProd) Then
+                '    L_PedidoDetalleRecibo_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                'Else
+                '    L_PedidoDetalleFactura_GrabarNuevo(Tb_Id.Text, codProd, cant, precio, subTotal, desc, total, flia, atributo)
+                'End If
                 'adiciono un objeto detalle
                 objListDetalle.Add(New RequestDetail(Tb_Id.Text, codProd, cant, precio, subTotal, L_ClaseGetProducto(codProd))) 'webLuis
             Next

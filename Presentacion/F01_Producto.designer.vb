@@ -57,6 +57,8 @@ Partial Class F01_Producto
         Me.btgrupo3 = New DevComponents.DotNetBar.ButtonX()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.swTipoDoc = New DevComponents.DotNetBar.Controls.SwitchButton()
+        Me.LabelX16 = New DevComponents.DotNetBar.LabelX()
         Me.CbUnidVenta = New Janus.Windows.GridEX.EditControls.MultiColumnCombo()
         Me.LabelX10 = New DevComponents.DotNetBar.LabelX()
         Me.btUniMaxima = New DevComponents.DotNetBar.ButtonX()
@@ -703,6 +705,8 @@ Partial Class F01_Producto
         '
         Me.Panel6.AutoScroll = True
         Me.Panel6.AutoSize = True
+        Me.Panel6.Controls.Add(Me.swTipoDoc)
+        Me.Panel6.Controls.Add(Me.LabelX16)
         Me.Panel6.Controls.Add(Me.CbUnidVenta)
         Me.Panel6.Controls.Add(Me.LabelX10)
         Me.Panel6.Controls.Add(Me.btUniMaxima)
@@ -716,6 +720,38 @@ Partial Class F01_Producto
         Me.Panel6.Name = "Panel6"
         Me.Panel6.Size = New System.Drawing.Size(390, 58)
         Me.Panel6.TabIndex = 210
+        '
+        'swTipoDoc
+        '
+        '
+        '
+        '
+        Me.swTipoDoc.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square
+        Me.swTipoDoc.Location = New System.Drawing.Point(271, 32)
+        Me.swTipoDoc.Name = "swTipoDoc"
+        Me.swTipoDoc.OffText = "NOTA FAC."
+        Me.swTipoDoc.OffTextColor = System.Drawing.Color.Red
+        Me.swTipoDoc.OnText = "RECIBO"
+        Me.swTipoDoc.OnTextColor = System.Drawing.Color.Green
+        Me.swTipoDoc.Size = New System.Drawing.Size(110, 23)
+        Me.swTipoDoc.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled
+        Me.swTipoDoc.TabIndex = 210
+        Me.swTipoDoc.ValueFalse = "0"
+        Me.swTipoDoc.ValueTrue = "1"
+        '
+        'LabelX16
+        '
+        '
+        '
+        '
+        Me.LabelX16.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square
+        Me.LabelX16.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.3!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LabelX16.ForeColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(85, Byte), Integer), CType(CType(139, Byte), Integer))
+        Me.LabelX16.Location = New System.Drawing.Point(205, 33)
+        Me.LabelX16.Name = "LabelX16"
+        Me.LabelX16.Size = New System.Drawing.Size(60, 23)
+        Me.LabelX16.TabIndex = 211
+        Me.LabelX16.Text = "Tipo Doc:"
         '
         'CbUnidVenta
         '
@@ -1670,4 +1706,6 @@ Partial Class F01_Producto
     Friend WithEvents CmDetalle As ContextMenuStrip
     Friend WithEvents QuitarProductoToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents swTipoDoc As DevComponents.DotNetBar.Controls.SwitchButton
+    Friend WithEvents LabelX16 As DevComponents.DotNetBar.LabelX
 End Class

@@ -67,7 +67,7 @@ Public Class LPedido
 
     Public Function ListarDespachoXNotaVentaDeChofer(idChofer As Integer, idPedido As Integer) As List(Of RDespachoNotaVenta)
         Try
-            Return iPedido.ListarDespachXNotaVentaDeChofer(idChofer, idPedido)
+            Return iPedido.ListarDespachXNotaVentaDeChofer2(idChofer, idPedido)
         Catch ex As Exception
             Throw New Exception(ex.Message)
         End Try

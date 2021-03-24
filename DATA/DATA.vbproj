@@ -395,6 +395,9 @@
     <Compile Include="EntityDataModel\BDDistBHF\VR_GO_DespachoNotaVenta.vb">
       <DependentUpon>BDDistBHFModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="EntityDataModel\BDDistBHF\VR_GO_DespachoNotaVenta2.vb">
+      <DependentUpon>BDDistBHFModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="EntityDataModel\BDDistBHF\VR_GO_DespachoXCliente.vb">
       <DependentUpon>BDDistBHFModel.tt</DependentUpon>
     </Compile>

@@ -3,6 +3,7 @@ Imports DevComponents.DotNetBar
 Imports DevComponents.DotNetBar.Controls
 Imports Janus.Windows.GridEX
 Imports Logica.AccesoLogica
+Imports UTILITIES
 
 Public Class F01_Producto
     Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
@@ -279,6 +280,7 @@ Public Class F01_Producto
         TbNombreCorto.ReadOnly = Not flat
         CbCategoria.ReadOnly = Not flat
         CbEmpresa.ReadOnly = Not flat
+        cbDosificacion.ReadOnly = Not flat
         SbStock.IsReadOnly = Not flat
         SbEstado.IsReadOnly = Not flat
         SbEquipo.IsReadOnly = Not flat
@@ -295,6 +297,7 @@ Public Class F01_Producto
         TbConversion.IsInputReadOnly = Not flat
 
         swPack.IsReadOnly = Not flat
+        swTipoDoc.IsReadOnly = Not flat
         JGProdPack.Enabled = flat
 
     End Sub
@@ -307,12 +310,13 @@ Public Class F01_Producto
         TbNombreCorto.Clear()
         CbCategoria.SelectedIndex = 0
         CbEmpresa.SelectedIndex = 0
+        cbDosificacion.SelectedIndex = 0
         SbStock.Value = True
         SbEstado.Value = True
         SbEquipo.Value = False
         DaFecha = Now.Date
         swPack.Value = False
-
+        swTipoDoc.Value = False
         If (Limpiar = False) Then
             _prSeleccionarCombo(cbgrupo1)
             _prSeleccionarCombo(cbgrupo2)
@@ -338,7 +342,7 @@ Public Class F01_Producto
         P_prArmarComboEmpresa()
         P_prArmarComboUnidVenta()
         P_prArmarComboUnidMax()
-
+        P_prArmarComboDosificacion()
         '_prCargarComboLibreria(cbgrupo1, 101)
         P_prArmarComboProveedor()
 
@@ -386,6 +390,7 @@ Public Class F01_Producto
                     Me.SbEquipo.Value = .GetValue("serie")
                     Me.DaFecha = .GetValue("fing")
                     Me.CbEmpresa.Value = .GetValue("cemp")
+                    Me.cbDosificacion.Value = .GetValue("caDosificacionId")
                     'cacbarra, casmin, cagr1, cagr2, cagr3, cagr4, caumed, cauventa, caumax, caconv
                     Me.tbCodBarra.Text = .GetValue("cacbarra").ToString
                     Me.tbStockMinimo.Text = .GetValue("casmin")
@@ -524,7 +529,7 @@ Public Class F01_Producto
         Dim conv As Integer
         Dim pack As Integer
         Dim TipoDoc As Integer
-
+        Dim DosificaionId As Integer
         If (BoNuevo) Then
             If (P_fnValidarGrabacion()) Then
                 numi = TbCodigo.Text.Trim
@@ -539,6 +544,7 @@ Public Class F01_Producto
                 pcom = "0" 'Por apuro esta estatico
                 fing = DaFecha.ToString("yyyy/MM/dd")
                 cemp = CbEmpresa.Value.ToString
+                DosificaionId = cbDosificacion.Value.ToString
                 uact = MTbUsuario.Text
                 barra = tbCodBarra.Text
                 smin = tbStockMinimo.Text
@@ -563,7 +569,10 @@ Public Class F01_Producto
                 End If
                 TipoDoc = IIf(swTipoDoc.Value, 1, 2)
                 'Grabar
-                Dim res As Boolean = L_fnProductoGrabar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, CType(JGProdPack.DataSource, DataTable), TipoDoc)
+                Dim res As Boolean = L_fnProductoGrabar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra,
+                                                        smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack,
+                                                        CType(JGProdPack.DataSource, DataTable), TipoDoc,
+                                                         DosificaionId)
 
                 If (res) Then
                     If (IsNothing(vlImagen) = False) Then
@@ -620,6 +629,7 @@ Public Class F01_Producto
                 umax = CbUnidMax.Value
                 pack = IIf(swPack.Value, "1", "0")
                 TipoDoc = IIf(swTipoDoc.Value, 1, 2)
+                DosificaionId = cbDosificacion.Value.ToString
                 If (TbConversion.Text.Trim = "") Then
                     conv = 0
                 Else
@@ -642,7 +652,9 @@ Public Class F01_Producto
 
 
                 'Grabar
-                Dim res As Boolean = L_fnProductoModificar(numi, cod, desc, desc2, cat, img, stc, est, serie, pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed, umin, umax, conv, pack, dt, TipoDoc)
+                Dim res As Boolean = L_fnProductoModificar(numi, cod, desc, desc2, cat, img, stc, est, serie,
+                                                           pcom, fing, cemp, barra, smin, gr1, gr2, gr3, gr4, umed,
+                                                           umin, umax, conv, pack, dt, TipoDoc, DosificaionId)
 
                 If (res) Then
                     If (IsNothing(vlImagen) = False) Then
@@ -900,6 +912,12 @@ Public Class F01_Producto
         End If
     End Sub
 
+    Private Sub P_prArmarComboDosificacion()
+        Dim Dt As DataTable
+        Dt = L_fnObteneterDosificaionDinoM()
+        ''   Dt = L_fnObtenerLibreria("5", IIf(TipoForm = 1, "cenum>0", "cenum<0"))
+        g_prArmarCombo(cbDosificacion, Dt, 60, 200, "cod", "Des")
+    End Sub
     Private Sub P_prArmarComboCategoria()
         Dim Dt As DataTable
         Dt = L_fnObtenerCategoria()
@@ -1377,7 +1395,16 @@ Public Class F01_Producto
             CbEmpresa.BackColor = Color.White
             MEP.SetError(CbCategoria, "")
         End If
-
+        If swTipoDoc.Value = False Then
+            If (Not IsNumeric(cbDosificacion.Value)) Then
+                cbDosificacion.BackColor = Color.Red
+                MEP.SetError(cbDosificacion, "Seleccione una tipo de dosificacion!".ToUpper)
+                res = False
+            Else
+                cbDosificacion.BackColor = Color.White
+                MEP.SetError(cbDosificacion, "")
+            End If
+        End If
         Return res
     End Function
 
@@ -1671,6 +1698,40 @@ Public Class F01_Producto
         'Next
         Me.Opacity = 100
         Timer1.Enabled = False
+    End Sub
+
+    Private Sub swTipoDoc_ValueChanged(sender As Object, e As EventArgs) Handles swTipoDoc.ValueChanged
+        Try
+
+            If swTipoDoc.Value Then
+                    lblDosificaion.Visible = False
+                    cbDosificacion.Visible = False
+                    cbDosificacion.SelectedIndex = 0
+                Else
+                    lblDosificaion.Visible = True
+                    cbDosificacion.Visible = True
+                    cbDosificacion.SelectedIndex = 1
+                End If
+
+        Catch ex As Exception
+            MostrarMensajeError(ex.Message)
+        End Try
+    End Sub
+    Private Sub MostrarMensajeError(mensaje As String)
+        ToastNotification.Show(Me,
+                               mensaje.ToUpper,
+                               My.Resources.WARNING,
+                               ENMensaje.MEDIANO,
+                               eToastGlowColor.Red,
+                               eToastPosition.TopCenter)
+    End Sub
+    Private Sub MostrarMensajeOk(mensaje As String)
+        ToastNotification.Show(Me,
+                               mensaje.ToUpper,
+                               My.Resources.OK,
+                               ENMensaje.MEDIANO,
+                               eToastGlowColor.Green,
+                               eToastPosition.TopCenter)
     End Sub
 
 #End Region

@@ -1794,7 +1794,9 @@ Public Class F02_PedidoNuevo
                 L_fnEliminarDatos("TV0011", "tbtv1numi=" + Tb_Id.Text.Trim)
 
                 GrabarTV001(Tb_Id.Text.Trim)
-
+                Dim pedidoId As Integer = 0
+                Dim dosificaionUno As Integer = 1
+                Dim dosificaionDos As Integer = 2
                 If nroFact <> String.Empty Then
                     Dim fechaFact As Date = L_fnObtenerDatoTabla("TFV001", "fvafec", "fvanumi=" + Tb_Id.Text.Trim)
 
@@ -1802,9 +1804,27 @@ Public Class F02_PedidoNuevo
                     L_fnEliminarDatos("TFV001", "fvanumi=" + Tb_Id.Text.Trim)
                     L_fnEliminarDatos("TFV0011", "fvbnumi=" + Tb_Id.Text.Trim)
 
+                    'Verifica si existe productos para facturar
+                    If New LPedido().
+                    VerfiicarDetallePedidoEsParaFacturar(
+                                                        Tb_Id.Text.Trim) Then
+                        Dim dtDetalle As DataTable
+                        'Productos para dosificacion uno
+                        If New LPedido().VerfiicarDetallePedidoXTipoDosificacion(pedidoId, dosificaionUno) Then
+
+                            dtDetalle = L_prObtenerDetallePedidoFactura(Tb_Id.Text.Trim)
+                            ModificarFactura(dtDetalle, nroFact, fechaFact)
+                        End If
+                        'Productos para dosificacion dos
+                        If New LPedido().VerfiicarDetallePedidoXTipoDosificacion(pedidoId, dosificaionDos) Then
+
+                            dtDetalle = L_prObtenerDetallePedidoFacturaDosificaionDos(Tb_Id.Text.Trim)
+                            ModificarFactura(dtDetalle, nroFact, fechaFact)
+                        End If
+                    End If
+
                     'Vuelvo a insertar TFV001 y TFV0011 modificado y reimprimo factura
-                    Dim dtDetalle As DataTable = L_prObtenerDetallePedidoFactura(Tb_Id.Text.Trim)
-                    P_fnGenerarFacturaModificada(dtDetalle.Rows(0).Item("oanumi"), dtDetalle.Rows(0).Item("subtotal"), dtDetalle.Rows(0).Item("descuento"), dtDetalle.Rows(0).Item("total"), dtDetalle.Rows(0).Item("nit"), dtDetalle.Rows(0).Item("cliente"), dtDetalle.Rows(0).Item("codcli"), nroFact, fechaFact)
+                    'Dim dtDetalle As DataTable = L_prObtenerDetallePedidoFactura(Tb_Id.Text.Trim)
 
                 Else
                     'Reimprimo Nota de venta
@@ -1830,13 +1850,21 @@ Public Class F02_PedidoNuevo
             MostrarMensajeError(ex.Message)
         End Try
     End Sub
+    Private Sub ModificarFactura(dtDetalle As DataTable, nroFact As String, fechaFact As String)
+        If Not IsDBNull(dtDetalle.Rows(0).Item("SubTotal")) Then
+            P_fnGenerarFacturaModificada(dtDetalle.Rows(0).Item("oanumi"), dtDetalle.Rows(0).Item("subtotal"), dtDetalle.Rows(0).Item("descuento"),
+                                                dtDetalle.Rows(0).Item("total"), dtDetalle.Rows(0).Item("nit"), dtDetalle.Rows(0).Item("cliente"), dtDetalle.Rows(0).Item("codcli"), nroFact, fechaFact)
+
+        End If
+    End Sub
     Private Function P_fnGenerarFacturaModificada(numi As String, subtotal As Double, descuento As Double, total As Double, nit As String, Nombre As String, Codcli As String, nfact As String, fechafact As Date) As Boolean
         Dim res As Boolean = False
-        res = P_fnGrabarFacturarTFV001Modificada(numi, subtotal, descuento, total, nit, Nombre, Codcli, nfact, fechafact) ' Grabar en la TFV001
+        Dim facturaId As Integer = 0
+        res = P_fnGrabarFacturarTFV001Modificada(numi, subtotal, descuento, total, nit, Nombre, Codcli, nfact, fechafact, facturaId) ' Grabar en la TFV001
         If (res) Then
             If (P_fnValidarFactura()) Then
                 'Validar para facturar
-                P_prImprimirFacturaModificada(numi, True, True, nit, nfact, fechafact)
+                P_prImprimirFacturaModificada(numi, True, True, nit, nfact, fechafact, facturaId)
             Else
                 'Volver todo al estada anterior
                 ToastNotification.Show(Me, "No es posible facturar!!!".ToUpper,
@@ -1856,7 +1884,8 @@ Public Class F02_PedidoNuevo
 
         Return res
     End Function
-    Private Function P_fnGrabarFacturarTFV001Modificada(numi As String, subtotal As Double, descuento As Double, total As Double, nit As String, nameCliente As String, Codcli As String, nfact As String, fechafact As Date) As Boolean
+    Private Function P_fnGrabarFacturarTFV001Modificada(numi As String, subtotal As Double, descuento As Double, total As Double, nit As String,
+                                                        nameCliente As String, Codcli As String, nfact As String, fechafact As Date, facturaId As String) As Boolean
         Dim a As Double = subtotal
         Dim b As Double = CDbl(0) 'Ya esta calculado el 55% del ICE
         Dim c As Double = CDbl("0")
@@ -1868,7 +1897,7 @@ Public Class F02_PedidoNuevo
 
         Dim res As Boolean = False
         'Grabado de Cabesera Factura
-        L_Grabar_Factura(numi,
+        L_Grabar_Factura(facturaId,
                         fechafact.ToString("yyyy/MM/dd"), nfact, "0",
                         "1",
                         nit,
@@ -1893,7 +1922,7 @@ Public Class F02_PedidoNuevo
         Dim dtDetalle As DataTable = L_prObtenerDetallePedido(numi)
         For i As Integer = 0 To dtDetalle.Rows.Count - 1 Step 1
 
-            L_Grabar_Factura_Detalle(numi.ToString,
+            L_Grabar_Factura_Detalle(facturaId.ToString,
                                         dtDetalle.Rows(i).Item("obcprod").ToString,
                                          dtDetalle.Rows(i).Item("producto").ToString,
                                         dtDetalle.Rows(i).Item("obpcant").ToString,
@@ -1906,7 +1935,10 @@ Public Class F02_PedidoNuevo
     Private Function P_fnValidarFactura() As Boolean
         Return True
     End Function
-    Private Sub P_prImprimirFacturaModificada(numi As String, impFactura As Boolean, grabarPDF As Boolean, nit As String, nfact As String, fechafact As Date)
+    Private Sub P_prImprimirFacturaModificada(numi As String, impFactura As Boolean, grabarPDF As Boolean, nit As String, nfact As String, fechafact As Date, facturaId As Integer)
+
+        FacturaPrint.P_prImprimirFacturar(numi, impFactura, grabarPDF, nit, QrFactura, Me, facturaId, False)
+
         Dim _Fecha, _FechaAl As Date
         Dim _Ds, _Ds1, _Ds2, _Ds3 As New DataSet
         Dim _Autorizacion, _Nit, _Fechainv, _Total, _Key, _Cod_Control, _Hora,
@@ -1925,7 +1957,7 @@ Public Class F02_PedidoNuevo
         _Hora = Now.Hour.ToString + ":" + Now.Minute.ToString
         _Ds1 = L_Dosificacion("1", "1", _Fecha)
 
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
         _Autorizacion = _Ds1.Tables(0).Rows(0).Item("yeautoriz").ToString
         _NumFac = CInt(nfact)
         _Nit = _Ds.Tables(0).Rows(0).Item("fvanitcli").ToString
@@ -1979,7 +2011,7 @@ Public Class F02_PedidoNuevo
 
 
         'updateTO001C(numi, Str(_NumFac))
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
 
         _Ds3 = L_ObtenerRutaImpresora("1") ' Datos de Impresion de Facturación
 
@@ -3306,7 +3338,7 @@ Public Class F02_PedidoNuevo
         _Hora = Now.Hour.ToString + ":" + Now.Minute.ToString
         _Ds1 = L_Dosificacion("1", "1", _Fecha)
 
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
         _Autorizacion = _Ds1.Tables(0).Rows(0).Item("yeautoriz").ToString
         _NumFac = CInt(_Ds1.Tables(0).Rows(0).Item("yenunf")) + 1
         _Nit = _Ds.Tables(0).Rows(0).Item("fvanitcli").ToString
@@ -3360,7 +3392,7 @@ Public Class F02_PedidoNuevo
 
 
         updateTO001C(numi, Str(_NumFac))
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
 
         _Ds3 = L_ObtenerRutaImpresora("1") ' Datos de Impresion de Facturación
 

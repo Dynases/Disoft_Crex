@@ -111,4 +111,20 @@ Public Class LPedido
             Throw New Exception(ex.Message)
         End Try
     End Function
+#Region "Verificaciones"
+    Public Function VerfiicarDetallePedidoEsParaFacturar(pedidoId As Integer) As Boolean
+        Try
+            Return iPedido.VerfiicarDetallePedidoEsParaFacturar(pedidoId)
+        Catch ex As Exception
+            Throw New Exception(ex.Message)
+        End Try
+    End Function
+    Public Function VerfiicarDetallePedidoXTipoDosificacion(pedidoId As Integer, tipoDosificacion As Integer) As Boolean
+        Try
+            Return iPedido.VerfiicarDetallePedidoXTipoDosificacion(pedidoId, tipoDosificacion)
+        Catch ex As Exception
+            Throw New Exception(ex.Message)
+        End Try
+    End Function
+#End Region
 End Class

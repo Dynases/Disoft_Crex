@@ -1413,7 +1413,7 @@ Public Class F0_Ventas
         _Hora = Now.Hour.ToString + ":" + Now.Minute.ToString
         _Ds1 = L_Dosificacion("1", "1", _Fecha)
 
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
         _Autorizacion = _Ds1.Tables(0).Rows(0).Item("yeautoriz").ToString
         _NumFac = CInt(_Ds1.Tables(0).Rows(0).Item("yenunf")) + 1
         _Nit = _Ds.Tables(0).Rows(0).Item("fvanitcli").ToString
@@ -1467,7 +1467,7 @@ Public Class F0_Ventas
 
 
         'updateTO001C(numi, Str(_NumFac))
-        _Ds = L_Reporte_Factura(numi, numi)
+        _Ds = L_Reporte_Factura(numi, numi, 0)
 
         _Ds3 = L_ObtenerRutaImpresora("1") ' Datos de Impresion de Facturación
 

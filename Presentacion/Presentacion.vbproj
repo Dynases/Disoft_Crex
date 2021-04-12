@@ -1495,6 +1495,7 @@
     <Compile Include="Utils\Efecto.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Utils\FacturaPrint.vb" />
     <Compile Include="Visualizador.designer.vb">
       <DependentUpon>Visualizador.vb</DependentUpon>
     </Compile>

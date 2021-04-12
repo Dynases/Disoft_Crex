@@ -4,12 +4,11 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="24fc2bc05e4645fd98e411859379ebf6" Name="Diagram1" ZoomLevel="61">
+      <Diagram DiagramId="24fc2bc05e4645fd98e411859379ebf6" Name="Diagram1" ZoomLevel="92">
         <EntityTypeShape EntityType="BDDistBHFModel.CM001" Width="1.5" PointX="5.75" PointY="0.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.CM0011" Width="1.5" PointX="5.75" PointY="4.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.TA001" Width="1.5" PointX="7.75" PointY="0.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.TB001" Width="1.5" PointX="7.75" PointY="3.75" />
-        <EntityTypeShape EntityType="BDDistBHFModel.TC001" Width="1.5" PointX="7.75" PointY="7.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.TC0013" Width="1.5" PointX="0.75" PointY="8.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.TC002" Width="1.5" PointX="2.75" PointY="8.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.TC003" Width="1.5" PointX="4.75" PointY="8.75" />
@@ -142,6 +141,7 @@
         <EntityTypeShape EntityType="BDDistBHFModel.TO001D" Width="1.5" PointX="23.375" PointY="26.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.VR_GO_Factura" Width="1.5" PointX="19.375" PointY="30.75" />
         <EntityTypeShape EntityType="BDDistBHFModel.VR_GO_DespachoNotaVenta2" Width="1.5" PointX="36.375" PointY="0.75" />
+        <EntityTypeShape EntityType="BDDistBHFModel.TC001" Width="1.5" PointX="13.375" PointY="36.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -409,4 +409,42 @@ Public Class RPedido
             Throw New Exception(ex.Message)
         End Try
     End Function
+#Region "Verificaciones"
+    Public Function VerfiicarDetallePedidoEsParaFacturar(idPedido As Integer) As Boolean Implements IPedido.VerfiicarDetallePedidoEsParaFacturar
+        Try
+            Using db = GetSchema()
+                Dim esFactura = (From detalle In db.TO0011
+                                 Join producto In db.TC001 On detalle.obcprod Equals producto.canumi
+                                 Where detalle.obnumi = idPedido And producto.caTipoDoc = 2 'Producto a facturar
+                                 ).Count()
+                If esFactura > 0 Then
+                    Return True
+                Else
+                    Return False
+                End If
+            End Using
+        Catch ex As Exception
+            Throw New Exception(ex.Message)
+        End Try
+    End Function
+    Public Function VerfiicarDetallePedidoXTipoDosificacion(idPedido As Integer, tipoDosificaion As Integer) As Boolean Implements IPedido.VerfiicarDetallePedidoXTipoDosificacion
+        Try
+            Using db = GetSchema()
+                Dim esFactura = (From detalle In db.TO0011
+                                 Join producto In db.TC001 On detalle.obcprod Equals producto.canumi
+                                 Where detalle.obnumi = idPedido And producto.caTipoDoc = 2 And producto.caDosificacionId = tipoDosificaion 'Producto a facturar
+                                 ).Count()
+                If esFactura > 0 Then
+                    Return True
+                Else
+                    Return False
+                End If
+            End Using
+        Catch ex As Exception
+            Throw New Exception(ex.Message)
+        End Try
+    End Function
+
+#End Region
+
 End Class

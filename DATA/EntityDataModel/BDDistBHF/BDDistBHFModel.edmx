@@ -85,6 +85,7 @@
           <Property Name="caconv" Type="decimal" Precision="18" Scale="2" />
           <Property Name="capack" Type="int" />
           <Property Name="caTipoDoc" Type="int" />
+          <Property Name="caDosificacionId" Type="int" />
         </EntityType>
         <!--Errores durante la generación:
 advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.TC0011' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
@@ -2523,6 +2524,7 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
           <Parameter Name="cod2" Type="int" Mode="In" />
           <Parameter Name="ygmer" Type="decimal" Mode="In" />
           <Parameter Name="tipoDoc" Type="int" Mode="In" />
+          <Parameter Name="dosificaionId" Type="int" Mode="In" />
         </Function>
         <Function Name="sp_go_TC002" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="tipo" Type="int" Mode="In" />
@@ -4510,6 +4512,7 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
             <Parameter Name="cod2" Mode="In" Type="Int32" />
             <Parameter Name="ygmer" Mode="In" Type="Decimal" />
             <Parameter Name="tipoDoc" Mode="In" Type="Int32" />
+            <Parameter Name="dosificaionId" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="sp_go_TC002" ReturnType="Collection(Int32)">
             <Parameter Name="tipo" Mode="In" Type="Int32" />
@@ -4997,7 +5000,6 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
           <EntitySet Name="CM0011" EntityType="BDDistBHFModel.CM0011" />
           <EntitySet Name="TA001" EntityType="BDDistBHFModel.TA001" />
           <EntitySet Name="TB001" EntityType="BDDistBHFModel.TB001" />
-          <EntitySet Name="TC001" EntityType="BDDistBHFModel.TC001" />
           <EntitySet Name="TC0013" EntityType="BDDistBHFModel.TC0013" />
           <EntitySet Name="TC002" EntityType="BDDistBHFModel.TC002" />
           <EntitySet Name="TC003" EntityType="BDDistBHFModel.TC003" />
@@ -5136,6 +5138,7 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
           <EntitySet Name="TO001D" EntityType="BDDistBHFModel.TO001D" />
           <EntitySet Name="VR_GO_Factura" EntityType="BDDistBHFModel.VR_GO_Factura" />
           <EntitySet Name="VR_GO_DespachoNotaVenta2" EntityType="BDDistBHFModel.VR_GO_DespachoNotaVenta2" />
+          <EntitySet Name="TC001" EntityType="BDDistBHFModel.TC001" />
           </EntityContainer>
         <ComplexType Name="sp_dg_RAsistencia_Result">
           <Property Type="Int32" Name="cbnumi" Nullable="false" />
@@ -5340,38 +5343,6 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
           <Property Name="bafact" Type="DateTime" Precision="0" />
           <Property Name="bahact" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
           <Property Name="bauact" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="TC001">
-          <Key>
-            <PropertyRef Name="canumi" />
-          </Key>
-          <Property Name="canumi" Type="Int32" Nullable="false" />
-          <Property Name="cacod" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="cadesc" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="cadesc2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="cacat" Type="Int32" />
-          <Property Name="caimg" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="castc" Type="Boolean" />
-          <Property Name="caest" Type="Boolean" />
-          <Property Name="caserie" Type="Boolean" />
-          <Property Name="capcom" Type="Int32" />
-          <Property Name="cafing" Type="DateTime" Precision="0" />
-          <Property Name="cacemp" Type="Int32" />
-          <Property Name="cafact" Type="DateTime" Precision="0" />
-          <Property Name="cahact" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
-          <Property Name="cauact" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="cacbarra" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
-          <Property Name="casmin" Type="Int32" />
-          <Property Name="cagr1" Type="Int32" />
-          <Property Name="cagr2" Type="Int32" />
-          <Property Name="cagr3" Type="Int32" />
-          <Property Name="cagr4" Type="Int32" />
-          <Property Name="caumed" Type="Int32" />
-          <Property Name="cauventa" Type="Int32" />
-          <Property Name="caumax" Type="Int32" />
-          <Property Name="caconv" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="capack" Type="Int32" />
-          <Property Name="caTipoDoc" Type="Int32" />
         </EntityType>
         <EntityType Name="TC0013">
           <Key>
@@ -7507,6 +7478,39 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
           <Property Name="cctelf1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="cedesc" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="TC001">
+          <Key>
+            <PropertyRef Name="canumi" />
+          </Key>
+          <Property Name="canumi" Type="Int32" Nullable="false" />
+          <Property Name="cacod" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="cadesc" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="cadesc2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="cacat" Type="Int32" />
+          <Property Name="caimg" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="castc" Type="Boolean" />
+          <Property Name="caest" Type="Boolean" />
+          <Property Name="caserie" Type="Boolean" />
+          <Property Name="capcom" Type="Int32" />
+          <Property Name="cafing" Type="DateTime" Precision="0" />
+          <Property Name="cacemp" Type="Int32" />
+          <Property Name="cafact" Type="DateTime" Precision="0" />
+          <Property Name="cahact" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="cauact" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="cacbarra" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="casmin" Type="Int32" />
+          <Property Name="cagr1" Type="Int32" />
+          <Property Name="cagr2" Type="Int32" />
+          <Property Name="cagr3" Type="Int32" />
+          <Property Name="cagr4" Type="Int32" />
+          <Property Name="caumed" Type="Int32" />
+          <Property Name="cauventa" Type="Int32" />
+          <Property Name="caumax" Type="Int32" />
+          <Property Name="caconv" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="capack" Type="Int32" />
+          <Property Name="caTipoDoc" Type="Int32" />
+          <Property Name="caDosificacionId" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -7793,39 +7797,6 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
                 <ScalarProperty Name="baproc" ColumnName="baproc" />
                 <ScalarProperty Name="banum" ColumnName="banum" />
                 <ScalarProperty Name="banumi" ColumnName="banumi" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TC001">
-            <EntityTypeMapping TypeName="BDDistBHFModel.TC001">
-              <MappingFragment StoreEntitySet="TC001">
-                <ScalarProperty Name="caTipoDoc" ColumnName="caTipoDoc" />
-                <ScalarProperty Name="capack" ColumnName="capack" />
-                <ScalarProperty Name="caconv" ColumnName="caconv" />
-                <ScalarProperty Name="caumax" ColumnName="caumax" />
-                <ScalarProperty Name="cauventa" ColumnName="cauventa" />
-                <ScalarProperty Name="caumed" ColumnName="caumed" />
-                <ScalarProperty Name="cagr4" ColumnName="cagr4" />
-                <ScalarProperty Name="cagr3" ColumnName="cagr3" />
-                <ScalarProperty Name="cagr2" ColumnName="cagr2" />
-                <ScalarProperty Name="cagr1" ColumnName="cagr1" />
-                <ScalarProperty Name="casmin" ColumnName="casmin" />
-                <ScalarProperty Name="cacbarra" ColumnName="cacbarra" />
-                <ScalarProperty Name="cauact" ColumnName="cauact" />
-                <ScalarProperty Name="cahact" ColumnName="cahact" />
-                <ScalarProperty Name="cafact" ColumnName="cafact" />
-                <ScalarProperty Name="cacemp" ColumnName="cacemp" />
-                <ScalarProperty Name="cafing" ColumnName="cafing" />
-                <ScalarProperty Name="capcom" ColumnName="capcom" />
-                <ScalarProperty Name="caserie" ColumnName="caserie" />
-                <ScalarProperty Name="caest" ColumnName="caest" />
-                <ScalarProperty Name="castc" ColumnName="castc" />
-                <ScalarProperty Name="caimg" ColumnName="caimg" />
-                <ScalarProperty Name="cacat" ColumnName="cacat" />
-                <ScalarProperty Name="cadesc2" ColumnName="cadesc2" />
-                <ScalarProperty Name="cadesc" ColumnName="cadesc" />
-                <ScalarProperty Name="cacod" ColumnName="cacod" />
-                <ScalarProperty Name="canumi" ColumnName="canumi" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -10001,6 +9972,40 @@ advertencia 6002: La tabla o vista 'BDDistBHF_Crex.dbo.VR_VistaPedido_PrecioCost
                 <ScalarProperty Name="ccdesc" ColumnName="ccdesc" />
                 <ScalarProperty Name="oafdoc" ColumnName="oafdoc" />
                 <ScalarProperty Name="oanumi" ColumnName="oanumi" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TC001">
+            <EntityTypeMapping TypeName="BDDistBHFModel.TC001">
+              <MappingFragment StoreEntitySet="TC001">
+                <ScalarProperty Name="caDosificacionId" ColumnName="caDosificacionId" />
+                <ScalarProperty Name="caTipoDoc" ColumnName="caTipoDoc" />
+                <ScalarProperty Name="capack" ColumnName="capack" />
+                <ScalarProperty Name="caconv" ColumnName="caconv" />
+                <ScalarProperty Name="caumax" ColumnName="caumax" />
+                <ScalarProperty Name="cauventa" ColumnName="cauventa" />
+                <ScalarProperty Name="caumed" ColumnName="caumed" />
+                <ScalarProperty Name="cagr4" ColumnName="cagr4" />
+                <ScalarProperty Name="cagr3" ColumnName="cagr3" />
+                <ScalarProperty Name="cagr2" ColumnName="cagr2" />
+                <ScalarProperty Name="cagr1" ColumnName="cagr1" />
+                <ScalarProperty Name="casmin" ColumnName="casmin" />
+                <ScalarProperty Name="cacbarra" ColumnName="cacbarra" />
+                <ScalarProperty Name="cauact" ColumnName="cauact" />
+                <ScalarProperty Name="cahact" ColumnName="cahact" />
+                <ScalarProperty Name="cafact" ColumnName="cafact" />
+                <ScalarProperty Name="cacemp" ColumnName="cacemp" />
+                <ScalarProperty Name="cafing" ColumnName="cafing" />
+                <ScalarProperty Name="capcom" ColumnName="capcom" />
+                <ScalarProperty Name="caserie" ColumnName="caserie" />
+                <ScalarProperty Name="caest" ColumnName="caest" />
+                <ScalarProperty Name="castc" ColumnName="castc" />
+                <ScalarProperty Name="caimg" ColumnName="caimg" />
+                <ScalarProperty Name="cacat" ColumnName="cacat" />
+                <ScalarProperty Name="cadesc2" ColumnName="cadesc2" />
+                <ScalarProperty Name="cadesc" ColumnName="cadesc" />
+                <ScalarProperty Name="cacod" ColumnName="cacod" />
+                <ScalarProperty Name="canumi" ColumnName="canumi" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -2569,13 +2569,26 @@ Public Class AccesoLogica
 
         Return _Tabla
     End Function
+    Public Shared Function L_fnObteneterDosificaionDinoM() As DataTable
+        Dim _Tabla As DataTable
+
+        Dim _listParam As New List(Of Datos.DParametro)
+
+        _listParam.Add(New Datos.DParametro("@tipo", 6))
+        _listParam.Add(New Datos.DParametro("@uact", L_Usuario))
+
+        _Tabla = D_ProcedimientoConParam("sp_go_TS002", _listParam)
+
+        Return _Tabla
+    End Function
 
     Public Shared Function L_fnProductoGrabar(ByRef numi As String, cod As String, desc As String, desc2 As String,
                                               cat As String, ByRef img As String, stc As String, est As String,
                                               serie As String, pcom As String, fing As String, cemp As String,
                                               barra As String, smin As String, gr1 As String, gr2 As String,
                                               gr3 As String, gr4 As String, umed As String, umin As String,
-                                              umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer) As Boolean
+                                              umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer,
+                                              dosificaionId As String) As Boolean
         Dim _resultado As Boolean
 
         Dim _Tabla As DataTable
@@ -2607,6 +2620,7 @@ Public Class AccesoLogica
         _listParam.Add(New Datos.DParametro("@conv", conv))
         _listParam.Add(New Datos.DParametro("@pack", pack))
         _listParam.Add(New Datos.DParametro("@tipoDoc", tipoDoc))
+        _listParam.Add(New Datos.DParametro("@dosificaionId", dosificaionId))
         _listParam.Add(New Datos.DParametro("@TC0013", "", _TC0013))
 
         _Tabla = D_ProcedimientoConParam("sp_go_TC001", _listParam)
@@ -2627,7 +2641,8 @@ Public Class AccesoLogica
                                                  serie As String, pcom As String, fing As String, cemp As String,
                                                  barra As String, smin As String, gr1 As String, gr2 As String,
                                                  gr3 As String, gr4 As String, umed As String, umin As String,
-                                                 umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer) As Boolean
+                                                 umax As String, conv As Integer, pack As Integer, _TC0013 As DataTable, tipoDoc As Integer,
+                                                 dosificaionId As String) As Boolean
         Dim _resultado As Boolean
 
         Dim _Tabla As DataTable
@@ -2659,6 +2674,7 @@ Public Class AccesoLogica
         _listParam.Add(New Datos.DParametro("@conv", conv))
         _listParam.Add(New Datos.DParametro("@pack", pack))
         _listParam.Add(New Datos.DParametro("@tipoDoc", tipoDoc))
+        _listParam.Add(New Datos.DParametro("@dosificaionId", dosificaionId))
         _listParam.Add(New Datos.DParametro("@TC0013", "", _TC0013))
 
         _Tabla = D_ProcedimientoConParam("sp_go_TC001", _listParam)
@@ -8952,12 +8968,26 @@ Public Class AccesoLogica
         _Tabla = D_ProcedimientoConParam("sp_Mam_TO005", _listParam)
         Return _Tabla
     End Function
-
-
     Public Shared Function L_prObtenerDetallePedidoFactura(numi As String) As DataTable
         Dim _Tabla As DataTable
         Dim _listParam As New List(Of Datos.DParametro)
         _listParam.Add(New Datos.DParametro("@tipo", 19))
+        _listParam.Add(New Datos.DParametro("@numi", numi))
+        _Tabla = D_ProcedimientoConParam("sp_Mam_TO005", _listParam)
+        Return _Tabla
+    End Function
+    Public Shared Function L_prObtenerDetallePedidoFacturaDosificaionDos(numi As String) As DataTable
+        Dim _Tabla As DataTable
+        Dim _listParam As New List(Of Datos.DParametro)
+        _listParam.Add(New Datos.DParametro("@tipo", 191))
+        _listParam.Add(New Datos.DParametro("@numi", numi))
+        _Tabla = D_ProcedimientoConParam("sp_Mam_TO005", _listParam)
+        Return _Tabla
+    End Function
+    Public Shared Function L_prObtenerDetallePedidoFactura2(numi As String) As DataTable
+        Dim _Tabla As DataTable
+        Dim _listParam As New List(Of Datos.DParametro)
+        _listParam.Add(New Datos.DParametro("@tipo", 191))
         _listParam.Add(New Datos.DParametro("@numi", numi))
         _Tabla = D_ProcedimientoConParam("sp_Mam_TO005", _listParam)
         Return _Tabla
@@ -10296,11 +10326,18 @@ Public Class AccesoLogica
 
 #Region "Facturar"
 
-    Public Shared Sub L_Grabar_Factura(_Numi As String, _Fecha As String, _Nfac As String, _NAutoriz As String, _Est As String,
+    Public Shared Sub L_Grabar_Factura(ByRef _Numi As String, _Fecha As String, _Nfac As String, _NAutoriz As String, _Est As String,
                                        _NitCli As String, _CodCli As String, _DesCli1 As String, _DesCli2 As String,
                                        _A As String, _B As String, _C As String, _D As String, _E As String, _F As String,
                                        _G As String, _H As String, _CodCon As String, _FecLim As String,
                                        _Imgqr As String, _Alm As String, _Numi2 As String)
+
+        Dim _Tabla = D_Maximo("TFV001", "fvanumi", "fvanumi = fvanumi")
+        If Not IsDBNull(_Tabla.Rows(0).Item(0)) Then
+            _Numi = _Tabla.Rows(0).Item(0) + 1
+        Else
+            _Numi = "1"
+        End If
         Dim Sql As String
         Try
             Sql = "" + _Numi + ", " _
@@ -10388,18 +10425,65 @@ Public Class AccesoLogica
             MsgBox(ex.Message)
         End Try
     End Sub
+    Public Shared Function L_fnContarFacturas(numi As String) As Boolean
+        Dim _resultado As Boolean
 
-    Public Shared Function L_Reporte_Factura(_Numi As String, _Numi2 As String) As DataSet
+        Dim _Tabla As DataTable
+        Dim _listParam As New List(Of Datos.DParametro)
+
+        _listParam.Add(New Datos.DParametro("@tipo", -1))
+        _listParam.Add(New Datos.DParametro("@numi", numi))
+        _listParam.Add(New Datos.DParametro("@uact", L_Usuario))
+
+        _Tabla = D_ProcedimientoConParam("sp_go_TC002", _listParam)
+
+        If _Tabla.Rows.Count > 0 Then
+            _resultado = True
+        Else
+            _resultado = False
+        End If
+
+        Return _resultado
+    End Function
+    Public Shared Function L_Reporte_Factura(_Numi As String, _Numi2 As String, tipoDosificacion As Integer) As DataSet
         Dim _Tabla As DataTable
         Dim _Ds As New DataSet
         Dim _Where As String
         _Where = " fvanumi = " + _Numi + " and fvanumi2 = " + _Numi2
+        '_Where = "fvanumi2 = " + _Numi2
+        If tipoDosificacion = 0 Then
+            _Tabla = D_Datos_Tabla("*", "VR_GO_Factura", _Where)
+        Else
+            _Tabla = D_Datos_Tabla("*", "VR_GO_FacturaDos", _Where)
+        End If
 
-        _Tabla = D_Datos_Tabla("*", "VR_GO_Factura", _Where)
         _Ds.Tables.Add(_Tabla)
         Return _Ds
     End Function
+    Public Shared Function L_ObtenerFacturas(pedidoId As Integer) As DataTable
+        Dim _Tabla As DataTable
 
+        Dim _listParam As New List(Of Datos.DParametro)
+        _listParam.Add(New Datos.DParametro("@tipo", 5))
+        _listParam.Add(New Datos.DParametro("@pedidoId", pedidoId))
+        _Tabla = D_ProcedimientoConParam("sp_Mam_TV001", _listParam)
+
+        Return _Tabla
+    End Function
+
+    Public Shared Function L_ObtenerTipoDosificaionXPedido(pedidoId As Integer, facturaId As Integer) As Integer
+        Dim _Tabla As DataTable
+        Dim resultado = 0
+        Dim _listParam As New List(Of Datos.DParametro)
+        _listParam.Add(New Datos.DParametro("@tipo", 6))
+        _listParam.Add(New Datos.DParametro("@pedidoId", facturaId))
+        _listParam.Add(New Datos.DParametro("@tanumi", pedidoId))
+        _Tabla = D_ProcedimientoConParam("sp_Mam_TV001", _listParam)
+        If _Tabla.Rows.Count > 0 Then
+            resultado = _Tabla.Rows(0).Item(0)
+        End If
+        Return resultado
+    End Function
     Public Shared Function L_Reporte_Factura_Cia(_Cia As String) As DataSet
         Dim _Tabla As DataTable
         Dim _Ds As New DataSet
@@ -10488,7 +10572,7 @@ Public Class AccesoLogica
         Dim _Ds As New DataSet
         Dim _Where As String
         _fecha = Now.Date.ToString("yyyy/MM/dd")
-        _Where = "yecia = " + _cia + " AND yealm = " + _alm + " AND yefdel <= '" + _fecha + "' AND yefal >= '" + _fecha + "' AND yeap = 1"
+        _Where = " yealm = " + _alm + " AND yefdel <= '" + _fecha + "' AND yefal >= '" + _fecha + "' AND yeap = 1"
 
         _Tabla = D_Datos_Tabla("*", "TS002", _Where)
         _Ds.Tables.Add(_Tabla)

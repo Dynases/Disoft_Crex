@@ -28,7 +28,6 @@ Partial Public Class BDDistBHFEntities
     Public Overridable Property CM0011() As DbSet(Of CM0011)
     Public Overridable Property TA001() As DbSet(Of TA001)
     Public Overridable Property TB001() As DbSet(Of TB001)
-    Public Overridable Property TC001() As DbSet(Of TC001)
     Public Overridable Property TC0013() As DbSet(Of TC0013)
     Public Overridable Property TC002() As DbSet(Of TC002)
     Public Overridable Property TC003() As DbSet(Of TC003)
@@ -159,6 +158,7 @@ Partial Public Class BDDistBHFEntities
     Public Overridable Property TO001D() As DbSet(Of TO001D)
     Public Overridable Property VR_GO_Factura() As DbSet(Of VR_GO_Factura)
     Public Overridable Property VR_GO_DespachoNotaVenta2() As DbSet(Of VR_GO_DespachoNotaVenta2)
+    Public Overridable Property TC001() As DbSet(Of TC001)
 
     Public Overridable Function PlanillaSueldo(fecha As Nullable(Of Date)) As Integer
         Dim fechaParameter As ObjectParameter = If(fecha.HasValue, New ObjectParameter("fecha", fecha), New ObjectParameter("fecha", GetType(Date)))
@@ -312,7 +312,7 @@ Partial Public Class BDDistBHFEntities
         Return DirectCast(Me, IObjectContextAdapter).ObjectContext.ExecuteFunction(Of sp_go_Reportes_Result)("sp_go_Reportes", tipoParameter, cprodParameter, finiParameter, ffinParameter, codigoParameter, clienteParameter, banParameter, anhoParameter, mesParameter)
     End Function
 
-    Public Overridable Function sp_go_TC001(tipo As Nullable(Of Integer), numi As Nullable(Of Integer), cod As String, desc As String, desc2 As String, cat As Nullable(Of Integer), img As String, stc As Nullable(Of Boolean), est As Nullable(Of Boolean), serie As Nullable(Of Boolean), pcom As Nullable(Of Integer), fing As Nullable(Of Date), cemp As Nullable(Of Integer), uact As String, filtro As Nullable(Of Integer), cbarra As String, smin As Nullable(Of Integer), gr1 As Nullable(Of Integer), gr2 As Nullable(Of Integer), gr3 As Nullable(Of Integer), gr4 As Nullable(Of Integer), umed As Nullable(Of Integer), uventa As Nullable(Of Integer), umax As Nullable(Of Integer), conv As Nullable(Of Integer), cecon As Nullable(Of Integer), cedesc As String, pack As Nullable(Of Integer), numipro As Nullable(Of Integer), ygnumi As Nullable(Of Integer), ygcod As String, ygdesc As String, ygpcv As Nullable(Of Integer), yguact As String, almacen As Nullable(Of Integer), categoria As Nullable(Of Integer), cod1 As Nullable(Of Integer), cod2 As Nullable(Of Integer), ygmer As Nullable(Of Decimal), tipoDoc As Nullable(Of Integer)) As ObjectResult(Of Nullable(Of Integer))
+    Public Overridable Function sp_go_TC001(tipo As Nullable(Of Integer), numi As Nullable(Of Integer), cod As String, desc As String, desc2 As String, cat As Nullable(Of Integer), img As String, stc As Nullable(Of Boolean), est As Nullable(Of Boolean), serie As Nullable(Of Boolean), pcom As Nullable(Of Integer), fing As Nullable(Of Date), cemp As Nullable(Of Integer), uact As String, filtro As Nullable(Of Integer), cbarra As String, smin As Nullable(Of Integer), gr1 As Nullable(Of Integer), gr2 As Nullable(Of Integer), gr3 As Nullable(Of Integer), gr4 As Nullable(Of Integer), umed As Nullable(Of Integer), uventa As Nullable(Of Integer), umax As Nullable(Of Integer), conv As Nullable(Of Integer), cecon As Nullable(Of Integer), cedesc As String, pack As Nullable(Of Integer), numipro As Nullable(Of Integer), ygnumi As Nullable(Of Integer), ygcod As String, ygdesc As String, ygpcv As Nullable(Of Integer), yguact As String, almacen As Nullable(Of Integer), categoria As Nullable(Of Integer), cod1 As Nullable(Of Integer), cod2 As Nullable(Of Integer), ygmer As Nullable(Of Decimal), tipoDoc As Nullable(Of Integer), dosificaionId As Nullable(Of Integer)) As ObjectResult(Of Nullable(Of Integer))
         Dim tipoParameter As ObjectParameter = If(tipo.HasValue, New ObjectParameter("tipo", tipo), New ObjectParameter("tipo", GetType(Integer)))
 
         Dim numiParameter As ObjectParameter = If(numi.HasValue, New ObjectParameter("numi", numi), New ObjectParameter("numi", GetType(Integer)))
@@ -393,7 +393,9 @@ Partial Public Class BDDistBHFEntities
 
         Dim tipoDocParameter As ObjectParameter = If(tipoDoc.HasValue, New ObjectParameter("tipoDoc", tipoDoc), New ObjectParameter("tipoDoc", GetType(Integer)))
 
-        Return DirectCast(Me, IObjectContextAdapter).ObjectContext.ExecuteFunction(Of Nullable(Of Integer))("sp_go_TC001", tipoParameter, numiParameter, codParameter, descParameter, desc2Parameter, catParameter, imgParameter, stcParameter, estParameter, serieParameter, pcomParameter, fingParameter, cempParameter, uactParameter, filtroParameter, cbarraParameter, sminParameter, gr1Parameter, gr2Parameter, gr3Parameter, gr4Parameter, umedParameter, uventaParameter, umaxParameter, convParameter, ceconParameter, cedescParameter, packParameter, numiproParameter, ygnumiParameter, ygcodParameter, ygdescParameter, ygpcvParameter, yguactParameter, almacenParameter, categoriaParameter, cod1Parameter, cod2Parameter, ygmerParameter, tipoDocParameter)
+        Dim dosificaionIdParameter As ObjectParameter = If(dosificaionId.HasValue, New ObjectParameter("dosificaionId", dosificaionId), New ObjectParameter("dosificaionId", GetType(Integer)))
+
+        Return DirectCast(Me, IObjectContextAdapter).ObjectContext.ExecuteFunction(Of Nullable(Of Integer))("sp_go_TC001", tipoParameter, numiParameter, codParameter, descParameter, desc2Parameter, catParameter, imgParameter, stcParameter, estParameter, serieParameter, pcomParameter, fingParameter, cempParameter, uactParameter, filtroParameter, cbarraParameter, sminParameter, gr1Parameter, gr2Parameter, gr3Parameter, gr4Parameter, umedParameter, uventaParameter, umaxParameter, convParameter, ceconParameter, cedescParameter, packParameter, numiproParameter, ygnumiParameter, ygcodParameter, ygdescParameter, ygpcvParameter, yguactParameter, almacenParameter, categoriaParameter, cod1Parameter, cod2Parameter, ygmerParameter, tipoDocParameter, dosificaionIdParameter)
     End Function
 
     Public Overridable Function sp_go_TC002(tipo As Nullable(Of Integer), numi As Nullable(Of Integer), desc As String, direc As String, telef As String, cat As Nullable(Of Integer), sal As Nullable(Of Decimal), ci As String, obs As String, fnac As Nullable(Of Date), fing As Nullable(Of Date), fret As Nullable(Of Date), fot As String, est As Nullable(Of Boolean), eciv As String, plan As Nullable(Of Integer), reloj As Nullable(Of Integer), uact As String, cbalmacen As Nullable(Of Integer)) As ObjectResult(Of Nullable(Of Integer))

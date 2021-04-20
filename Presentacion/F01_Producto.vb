@@ -152,7 +152,7 @@ Public Class F01_Producto
 
         'Armar todo los combobox 
         P_prArmarCombos()
-
+        swTipoDoc.Value = True
         'Armar todo las grillas
         BoNavegar = False
         P_PrArmarGrillas()
@@ -1702,17 +1702,15 @@ Public Class F01_Producto
 
     Private Sub swTipoDoc_ValueChanged(sender As Object, e As EventArgs) Handles swTipoDoc.ValueChanged
         Try
-
             If swTipoDoc.Value Then
-                    lblDosificaion.Visible = False
-                    cbDosificacion.Visible = False
-                    cbDosificacion.SelectedIndex = 0
-                Else
-                    lblDosificaion.Visible = True
-                    cbDosificacion.Visible = True
-                    cbDosificacion.SelectedIndex = 1
-                End If
-
+                lblDosificaion.Visible = False
+                cbDosificacion.Visible = False
+                cbDosificacion.SelectedIndex = 0
+            Else
+                lblDosificaion.Visible = True
+                cbDosificacion.Visible = True
+                cbDosificacion.SelectedIndex = 1
+            End If
         Catch ex As Exception
             MostrarMensajeError(ex.Message)
         End Try
